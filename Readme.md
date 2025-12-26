@@ -27,15 +27,24 @@ A small Laravel + React e-commerce project with cart management, low stock notif
    ```bash
    composer install
    npm install
+   ```
 3. Copy .env.example to .env and set database , mail settings and ADMIN_EMAIL 
 4. Run migrations & seeders:
    ```bash
    php artisan migrate:fresh --seed
+   ```
 5. To run the project locally with all services (server, queue, scheduler, frontend) for quick testing run:
    ```bash
    composer run dev
+   ```
 
 in production server you might want to setup Laravel scheduler to run every mins on your crontab
 
 ```bash
 * * * * * cd /path-to-cloned-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## Dumy test user
+
+login: test@example.com
+password: password
