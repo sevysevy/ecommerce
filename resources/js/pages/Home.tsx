@@ -1,7 +1,9 @@
-import GuestLayout from '@/Layouts/GuestLayout';
+import BaseLayout from '@/layouts/BaseLayout';
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
+import { useState } from 'react';
+import {store as cartStore} from '@/routes/cart';
 
 interface Product {
     id: number;
@@ -12,14 +14,33 @@ interface Product {
 
 interface HomeProps {
     products: Product[];
-    
 }
 
 export default function Home({ products }: HomeProps) {
     const { auth } = usePage<SharedData>().props;
+    const [loadingIds, setLoadingIds] = useState<number[]>([]);
+
+    const handleAddToCart = async (productId: number) => {
+        if (loadingIds.includes(productId)) return; 
+        setLoadingIds((prev) => [...prev, productId]);
+
+        router.post(cartStore(), { product_id: productId }, {
+            onFinish: () => {
+                setLoadingIds((prev) => prev.filter((id) => id !== productId));
+            },
+            onSuccess: () => {
+                
+                alert('Product added to cart!');
+            },
+            onError: (errors) => {
+                console.log(errors)
+                alert(errors?.quantity || 'Error adding product');
+            },
+        });
+    };
 
     return (
-        <GuestLayout>
+        <BaseLayout>
             <Head title="Products" />
             
             <div className="max-w-7xl mx-auto px-6 py-8">
@@ -33,7 +54,7 @@ export default function Home({ products }: HomeProps) {
                             key={product.id}
                             className="bg-white border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
                         >
-                            {/* Product image placeholder */}
+                            
                             <div className="h-40 bg-gray-200 rounded mb-4 flex items-center justify-center">
                                 <span className="text-gray-400">Image</span>
                             </div>
@@ -43,7 +64,7 @@ export default function Home({ products }: HomeProps) {
                             </h2>
                             
                             <p className="text-2xl font-bold text-blue-600 mb-3">
-                                ${product.price}
+                                {product.price} €
                             </p>
 
                             <div className="mb-4">
@@ -62,9 +83,11 @@ export default function Home({ products }: HomeProps) {
                                 auth.user ? (
                                     <button
                                         type="button"
-                                        className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                        className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                                        onClick={() => handleAddToCart(product.id)}
+                                        disabled={loadingIds.includes(product.id)}
                                     >
-                                        Add to cart
+                                        {loadingIds.includes(product.id) ? 'Adding...' : 'Add to cart'}
                                     </button>
                                 ) : (
                                     <Link
@@ -79,6 +102,6 @@ export default function Home({ products }: HomeProps) {
                     ))}
                 </div>
             </div>
-        </GuestLayout>
+        </BaseLayout>
     );
 }

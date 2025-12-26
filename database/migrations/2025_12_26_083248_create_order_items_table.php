@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('product_id')
                 ->constrained()
                 ->restrictOnDelete();
+            $table->string('name');
             $table->unsignedInteger('quantity');
             $table->decimal('unit_price', 10, 2);
             $table->timestamps();

@@ -45,6 +45,16 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'cartItemCount' => function () use ($request) {
+                if ($request->user()) {
+                    $cart = $request->user()->cart;
+                    
+                    if ($cart) {
+                        return $cart->items()->sum('quantity');
+                    }
+                }
+                return 0;
+            },
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
