@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Validation\ValidationException;
+
+use Illuminate\Support\Facades\Log;
+
 class CheckoutController extends Controller
 {
     public function store()

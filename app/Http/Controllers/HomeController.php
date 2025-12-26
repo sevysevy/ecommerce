@@ -12,7 +12,6 @@ class HomeController extends Controller
     {
         return Inertia::render('Home', [
             'products' => Product::all(),
-            //'canRegister' => Features::enabled(Features::registration()),
         ]);
 
     }
